@@ -7,13 +7,10 @@ export class CvEntity {
     id:number;
 
     @Column()
-    firstname: string;
+    name: string;
 
     @Column()
     age: number;
-
-    @Column()
-    Cin:number;
 
     @Column()
     Job: string;

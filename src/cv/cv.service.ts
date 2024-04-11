@@ -1,12 +1,26 @@
 import { Injectable } from '@nestjs/common';
 import { CreateCvDto } from './dto/create-cv.dto';
 import { UpdateCvDto } from './dto/update-cv.dto';
+import { CvEntity } from './entities/cv.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { UserEntity } from '../user/entities/user.entity';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class CvService {
-  create(createCvDto: CreateCvDto) {
-    return 'This action adds a new cv';
+  constructor(
+    @InjectRepository(CvEntity)
+    private  readonly cvRepository: Repository<CvEntity>,
+    private readonly userService : UserService
+  ){
   }
+
+ async create(createCvDto: CreateCvDto , user: UserEntity) : Promise<CvEntity> {
+    const newCv = this.cvRepository.create({ ...createCvDto, user: user });
+    return this.cvRepository.save(newCv);
+  }
+  
 
   findAll() {
     return `This action returns all cv`;
