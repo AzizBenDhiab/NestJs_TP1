@@ -13,7 +13,7 @@ export class CvEntity {
     age: number;
 
     @Column()
-    Job: string;
+    job: string;
 
     @Column()
     path: string;

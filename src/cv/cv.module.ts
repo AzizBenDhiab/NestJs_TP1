@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { CvService } from './cv.service';
 import { CvController } from './cv.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -7,8 +7,9 @@ import { UserModule } from '.././user/user.module';
 
 @Module({
   imports:[
-    TypeOrmModule.forFeature([CvEntity]),
-    UserModule
+   
+    forwardRef(() =>UserModule),
+    TypeOrmModule.forFeature([CvEntity])
   ],
   controllers: [CvController],
   providers: [CvService],
