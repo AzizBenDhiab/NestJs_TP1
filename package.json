@@ -18,7 +18,9 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "seed:cvs": "ts-node src/commands/cv.seeder.ts"
+    "seed:cvs": "ts-node src/commands/cv.seeder.ts",
+    "seed:users": "ts-node src/commands/user.seeder.ts",
+    "seed:skills": "ts-node src/commands/skill.seeder.ts"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",

@@ -2,7 +2,6 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from '../app.module';
 import { CvService } from '../cv/cv.service';
 import { UserService } from '../user/user.service';
-import { CvEntity } from '../cv/entities/cv.entity';
 import {  randFilePath, randFullName, randJobTitle, randNumber, randUser, randWord } from '@ngneat/falso';
 import { CreateCvDto } from '../cv/dto/create-cv.dto';
 async function bootstrap() {
