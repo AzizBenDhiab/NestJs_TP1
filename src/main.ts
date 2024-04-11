@@ -3,6 +3,9 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.createApplicationContext(AppModule);
+  
+  // Todo : Do What you want
+  
   await app.close();
-}
-bootstrap();
+  }
+  bootstrap();
