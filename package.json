@@ -27,7 +27,7 @@
     "@nestjs/typeorm": "^10.0.2",
     "@ngneat/falso": "^7.2.0",
     "dotenv": "^16.4.5",
-    "mysql": "^2.18.1",
+    "mysql2": "^3.9.4",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1",
     "typeorm": "^0.3.20"
