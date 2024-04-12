@@ -24,8 +24,8 @@ export class CvController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCvDto: UpdateCvDto) {
-    return this.cvService.update(+id, updateCvDto);
+  update(@Param('id') id: string, @Body() updateCvDto: UpdateCvDto ,user : UserEntity) {
+    return this.cvService.update(+id,  updateCvDto,user);
   }
 
   @Delete(':id')
