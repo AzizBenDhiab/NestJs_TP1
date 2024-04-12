@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException,UnauthorizedException } from '@nestjs/common';
 import { CreateCvDto } from './dto/create-cv.dto';
 import { UpdateCvDto } from './dto/update-cv.dto';
 import { CvEntity } from './entities/cv.entity';
@@ -8,6 +8,7 @@ import { UserEntity } from '../user/entities/user.entity';
 import { UserService } from '../user/user.service';
 import { MulterFile } from './interfaces/multer-file.interface';
 
+import { SearchCvDto } from './dto/search-cv.dto';
 
 @Injectable()
 export class CvService {
@@ -32,19 +33,62 @@ export class CvService {
    return this.cvRepository.save(cv);
   }
 
-  findAll() {
-    return `This action returns all cv`;
+  async findAll() : Promise<CvEntity[]>{
+    return await this.cvRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} cv`;
+  async  findOne(id: number) : Promise<CvEntity> {
+    const cv = await this.cvRepository.findOne({ where: { id } });
+    return await cv;
+
   }
 
-  update(id: number, updateCvDto: UpdateCvDto) {
-    return `This action updates a #${id} cv`;
+  async update(id: number, cvDto: UpdateCvDto, user: UserEntity ): Promise<CvEntity> {
+    const existingCv = await this.cvRepository.findOne({ where: { id } });
+  if (!existingCv) {
+    throw new NotFoundException(`Le CV d'id ${id} n'existe pas`);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} cv`;
+  if (cvDto.name !== undefined) {
+    existingCv.name = cvDto.name;
   }
+  if (cvDto.age !== undefined) {
+    existingCv.age = cvDto.age;
+  }
+  if (cvDto.job !== undefined) {
+    existingCv.job = cvDto.job;
+  }
+  if (cvDto.path !== undefined) {
+    existingCv.path = cvDto.path;
+  }
+  if (user !== undefined) {
+    existingCv.user = user;
+  }
+
+  const updatedCv = await this.cvRepository.save(existingCv);
+
+  return updatedCv;
+}
+  async remove(id: number) {
+    return await this.cvRepository.delete(id);  }
+
+
+
+async searchCvs(searchDto: SearchCvDto): Promise<CvEntity[]> {
+  const { age, criteria } = searchDto;
+
+  // Build query conditions based on provided search criteria
+  const queryBuilder = this.cvRepository.createQueryBuilder('cv');
+  if (age) {
+      queryBuilder.orWhere('cv.age = :age', { age });
+  }
+  if (criteria) {
+      queryBuilder.orWhere('cv.name LIKE :criteria', { criteria: `%${criteria}%` })
+          .orWhere('cv.firstname LIKE :criteria', { criteria: `%${criteria}%` })
+          .orWhere('cv.job LIKE :criteria', { criteria: `%${criteria}%` });
+  }
+
+  // Execute the query and return the result
+  return queryBuilder.getMany();
+}
 }

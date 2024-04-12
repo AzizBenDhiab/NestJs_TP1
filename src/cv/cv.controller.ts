@@ -12,9 +12,11 @@ import { MulterFile } from './interfaces/multer-file.interface';
 export class CvController {
   constructor(private readonly cvService: CvService) {}
 
+
   @Post()
-  create(@Body() createCvDto: CreateCvDto, user: UserEntity) {
-    return this.cvService.create(createCvDto,user);
+  create(@Body() body: { createCvDto: CreateCvDto; user: UserEntity }) {
+    const { createCvDto, user } = body;
+    return this.cvService.create(createCvDto, user);
   }
 
   @Get()
@@ -28,8 +30,9 @@ export class CvController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCvDto: UpdateCvDto) {
-    return this.cvService.update(+id, updateCvDto);
+  update(@Param('id') id: string,@Body() body: { updateCvDto: UpdateCvDto; user: UserEntity }) {
+    const { updateCvDto, user } = body;
+     return this.cvService.update(+id,  updateCvDto,user);
   }
 
   @Delete(':id')
