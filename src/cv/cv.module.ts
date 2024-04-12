@@ -4,9 +4,35 @@ import { CvController } from './cv.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CvEntity } from './entities/cv.entity';
 import { UserModule } from '.././user/user.module';
+import { MulterModule } from '@nestjs/platform-express';
+import * as path from 'path';
+import { v4 as uuidv4 } from 'uuid';
+import { diskStorage } from 'multer';
+
+
+
 
 @Module({
   imports:[
+    MulterModule.register({
+      dest: './public/uploads',
+      limits: {
+        fileSize: 1024 * 1024, // taille max 1 mo
+      },
+      fileFilter: (req, file, cb) => {
+        if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+          return cb(new Error('Only image files are allowed!'), false);
+        }
+        cb(null, true);
+      },
+      storage: diskStorage({
+        destination: './public/uploads',
+        filename: (req, file, callback) => {
+          const randomName = uuidv4() + file.originalname;
+          callback(null, randomName);
+        },
+      }),
+    }),
    
     forwardRef(() =>UserModule),
     TypeOrmModule.forFeature([CvEntity])

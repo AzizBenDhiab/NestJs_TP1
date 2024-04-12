@@ -6,6 +6,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserEntity } from '../user/entities/user.entity';
 import { UserService } from '../user/user.service';
+import { MulterFile } from './interfaces/multer-file.interface';
+
 
 @Injectable()
 export class CvService {
@@ -16,11 +18,19 @@ export class CvService {
   ){
   }
 
- async create(createCvDto: CreateCvDto , user: UserEntity) : Promise<CvEntity> {
+  async create(createCvDto: CreateCvDto , user: UserEntity) : Promise<CvEntity> {
     const newCv = this.cvRepository.create({ ...createCvDto, user: user });
     return this.cvRepository.save(newCv);
   }
   
+  async associateFileWithCv(cvId: number, file: MulterFile): Promise<CvEntity> {
+  const cv = await this.cvRepository.findOne({ where: { id: cvId } });
+  if (!cv) {
+    throw new Error('cv not found');
+    }
+   cv.path = file.path; 
+   return this.cvRepository.save(cv);
+  }
 
   findAll() {
     return `This action returns all cv`;
