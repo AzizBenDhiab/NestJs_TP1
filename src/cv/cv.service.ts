@@ -33,19 +33,32 @@ export class CvService {
 
   }
 
-  async update(id: number, cv: UpdateCvDto, user: UserEntity ): Promise<CvEntity> {
-
-    const newCv = await this.cvRepository.preload({
-      id,
-      ...cv
-    });
-    if(! newCv) {
-      throw new NotFoundException(`Le cv d'id ${id} n'existe pas`);
-    }
-    return await this.cvRepository.save(newCv);
-
+  async update(id: number, cvDto: UpdateCvDto, user: UserEntity ): Promise<CvEntity> {
+    const existingCv = await this.cvRepository.findOne({ where: { id } });
+  if (!existingCv) {
+    throw new NotFoundException(`Le CV d'id ${id} n'existe pas`);
   }
 
+  if (cvDto.name !== undefined) {
+    existingCv.name = cvDto.name;
+  }
+  if (cvDto.age !== undefined) {
+    existingCv.age = cvDto.age;
+  }
+  if (cvDto.job !== undefined) {
+    existingCv.job = cvDto.job;
+  }
+  if (cvDto.path !== undefined) {
+    existingCv.path = cvDto.path;
+  }
+  if (user !== undefined) {
+    existingCv.user = user;
+  }
+
+  const updatedCv = await this.cvRepository.save(existingCv);
+
+  return updatedCv;
+}
   async remove(id: number) {
     return await this.cvRepository.delete(id);  }
 
