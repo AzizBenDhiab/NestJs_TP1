@@ -3,7 +3,7 @@ import { CreateCvDto } from './dto/create-cv.dto';
 import { UpdateCvDto } from './dto/update-cv.dto';
 import { CvEntity } from './entities/cv.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { UserEntity } from '../user/entities/user.entity';
 import { UserService } from '../user/user.service';
 import { MulterFile } from './interfaces/multer-file.interface';
@@ -82,6 +82,20 @@ export class CvService {
     return await this.cvRepository.delete(id);  }
 
 
+    async getCvsByCriteria(searchDTO: SearchCvDto): Promise<CvEntity[]> {
+      if (searchDTO.age || searchDTO.criteria) {
+        return await this.cvRepository.find({
+          where: [
+            { firstname: Like(`%${searchDTO.criteria}%`) },
+            { name: Like(`%${searchDTO.criteria}%`) },
+            { job: Like(`%${searchDTO.criteria}%`) },
+            { age: searchDTO.age },
+          ]
+        });
+      } else {
+        return await this.cvRepository.find();
+      }
+    }
 
 async searchCvs(searchDto: SearchCvDto): Promise<CvEntity[]> {
   const { age, criteria } = searchDto;
