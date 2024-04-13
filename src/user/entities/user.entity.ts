@@ -1,11 +1,14 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, JoinTable } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, JoinTable, Unique } from 'typeorm';
 import { CvEntity } from '../../cv/entities/cv.entity';
 import { SkillEntity } from '../../skill/entities/skill.entity';
 import { UserRoleEnum } from 'src/enums/user-role.enum';
 import { Exclude } from 'class-transformer';
+import { IsEmail } from 'class-validator';
 
 
 @Entity('user')
+@Unique(['username'])
+@Unique(['email'])
 export class UserEntity {
     @PrimaryGeneratedColumn()
     id: number;
@@ -14,6 +17,7 @@ export class UserEntity {
     username: string;
 
     @Column()
+    @IsEmail()
     email: string;
 
     @Column()

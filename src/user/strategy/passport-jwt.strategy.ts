@@ -12,13 +12,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     // private configService: ConfigService,
+    private configService: ConfigService,
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>
   ) {
+
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: process.env.SECRET
+      secretOrKey: configService.get('SECRET'),
     });
   }
 

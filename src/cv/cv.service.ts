@@ -9,6 +9,7 @@ import { UserService } from '../user/user.service';
 import { MulterFile } from './interfaces/multer-file.interface';
 import { SearchCvDto } from './dto/search-cv.dto';
 
+
 @Injectable()
 export class CvService {
   constructor(
@@ -19,8 +20,15 @@ export class CvService {
   }
 
   async create(createCvDto: CreateCvDto , user: UserEntity) : Promise<CvEntity> {
-    const newCv = this.cvRepository.create({ ...createCvDto, user: user });
-    return this.cvRepository.save(newCv);
+
+    try{
+      const newCv = this.cvRepository.create({ ...createCvDto, user: user });
+      return await  this.cvRepository.save(newCv);
+    }catch (e) {
+      throw new HttpException('tous les champs firstname age cin job path sont obligatoirs', HttpStatus.BAD_REQUEST);
+    }
+
+
   }
   
   async associateFileWithCv(cvId: number, file: MulterFile): Promise<CvEntity> {
@@ -32,43 +40,60 @@ export class CvService {
    return this.cvRepository.save(cv);
   }
 
+
+
   async findAll() : Promise<CvEntity[]>{
     return await this.cvRepository.find();
   }
 
-  async  findOne(id: number) : Promise<CvEntity> {
+  async findOneById({ id, user }: { id: number, user: any }): Promise<CvEntity> {
     const cv = await this.cvRepository.findOne({ where: { id } });
-    return await cv;
-
+    if (!cv) {
+      throw new NotFoundException(`Le CV d'ID ${id} n'existe pas`);
+    }
+    if (cv.user.id === user.id || user.role === 'admin') {
+      return cv;
+    } else {
+      throw new UnauthorizedException("Vous n'êtes pas autorisé à accéder à ce CV");
+    }
   }
 
-  async update(id: number, cvDto: UpdateCvDto, user: UserEntity ): Promise<CvEntity> {
+  async update(id: number, cvDto, user: UserEntity ): Promise<CvEntity> {
     const existingCv = await this.cvRepository.findOne({ where: { id } });
   if (!existingCv) {
     throw new NotFoundException(`Le CV d'id ${id} n'existe pas`);
   }
-
-  if (cvDto.name !== undefined) {
+  if(existingCv.user.id !== user.id && user.role !== 'admin') {
+    throw new UnauthorizedException("Vous n'êtes pas autorisé à modifier ce CV");
+  }
+  if (cvDto.name ) {
     existingCv.name = cvDto.name;
   }
-  if (cvDto.age !== undefined) {
+
+  if (cvDto.age ) {
     existingCv.age = cvDto.age;
   }
-  if (cvDto.job !== undefined) {
+  if (cvDto.job ) {
     existingCv.job = cvDto.job;
   }
-  if (cvDto.path !== undefined) {
+  if (cvDto.path ) {
     existingCv.path = cvDto.path;
   }
-  if (user !== undefined) {
-    existingCv.user = user;
-  }
+
 
   const updatedCv = await this.cvRepository.save(existingCv);
 
   return updatedCv;
 }
-  async remove(id: number) {
+  async remove(id: number,user:UserEntity): Promise<any> {
+    const existingCv = await this.cvRepository.findOne({ where: { id } });
+
+    if (!existingCv) {
+      throw new NotFoundException(`Le CV d'id ${id} n'existe pas`);
+    }
+    if(existingCv.user.id !== user.id && user.role !== 'admin') {
+      throw new UnauthorizedException("Vous n'êtes pas autorisé à supprimer ce CV");
+    }
     return await this.cvRepository.delete(id);  }
 
 

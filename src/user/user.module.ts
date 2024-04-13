@@ -9,11 +9,13 @@ import { CvModule } from '../cv/cv.module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './strategy/passport-jwt.strategy';
+import { ConfigModule } from '@nestjs/config';
 
 
 
 @Module({
  imports: [
+   ConfigModule,
     TypeOrmModule.forFeature([UserEntity]),
     forwardRef(() =>  CvModule),
     forwardRef(() =>SkillModule),
