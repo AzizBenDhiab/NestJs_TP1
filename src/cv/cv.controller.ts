@@ -10,6 +10,7 @@ import {
   UseInterceptors,
   UseGuards, UnauthorizedException, Request, ParseIntPipe,
 } from '@nestjs/common';
+
 import { CvService } from './cv.service';
 import { CreateCvDto } from './dto/create-cv.dto';
 import { UpdateCvDto } from './dto/update-cv.dto';
@@ -20,6 +21,7 @@ import { MulterFile } from './interfaces/multer-file.interface';
 import { JwtAuthGuard } from '../user/Guard/jwt-auth.guard';
 import { AdminGuard } from '../user/Guard/admin.guard';
 import { User } from '../user/decorator/user.decorator';
+import { SearchCvDto } from './dto/search-cv.dto';
 
 
 @Controller('cv')
@@ -31,11 +33,23 @@ export class CvController {
   create(@Body() body:  CreateCvDto, @User() user: UserEntity) {
     return this.cvService.create(body, user);
   }
+
+  @Get('find')
+  async findByCriteria(
+    @Query() searchDTO: SearchCvDto,
+  ) {
+    
+    return this.cvService.getCvsByCriteria(searchDTO);
+  }
   
   @Get()
   @UseGuards(JwtAuthGuard)
   findRelatedCvs(@User() user: UserEntity) {
     return this.cvService.findRelatedCvs(user);
+  }
+  @Get('all')
+  getAll(@Query('page') page: number = 1, @Query('limit') limit: number = 10) {
+      return this.cvService.getAll(page, limit);
   }
 
   @Get('all')

@@ -4,6 +4,8 @@ import { UpdateSkillDto } from './dto/update-skill.dto';
 import { SkillEntity } from './entities/skill.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { NotFoundException} from '@nestjs/common';
+
 
 @Injectable()
 export class SkillService {
@@ -16,19 +18,29 @@ private  readonly skillRepository: Repository<SkillEntity>)
     return this.skillRepository.save(newSkill)
   }
 
-  findAll() {
-    return `This action returns all skill`;
+  async findAll(): Promise<SkillEntity[]> {
+    return this.skillRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} skill`;
+  async findOne(id: number): Promise<SkillEntity> {
+    const skill = await this.skillRepository.findOne({ where: { id } });
+    return skill;
   }
 
-  update(id: number, updateSkillDto: UpdateSkillDto) {
-    return `This action updates a #${id} skill`;
+
+   async update(id: number,skill: UpdateSkillDto ): Promise<SkillEntity> {
+
+    const newskill = await this.skillRepository.preload({
+      id,
+      ...skill
+    });
+    if(! newskill) {
+      throw new NotFoundException(`Le skill d'id ${id} n'existe pas`);
+    }
+    return await this.skillRepository.save(newskill);
+
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} skill`;
-  }
+  async remove(id: number) {
+    return await this.skillRepository.delete(id);  }
 }

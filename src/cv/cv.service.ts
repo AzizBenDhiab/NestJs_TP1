@@ -3,7 +3,7 @@ import { CreateCvDto } from './dto/create-cv.dto';
 import { UpdateCvDto } from './dto/update-cv.dto';
 import { CvEntity } from './entities/cv.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { UserEntity } from '../user/entities/user.entity';
 import { UserService } from '../user/user.service';
 import { MulterFile } from './interfaces/multer-file.interface';
@@ -51,6 +51,16 @@ export class CvService {
   async findAll() : Promise<CvEntity[]>{
     return await this.cvRepository.find();
   }
+  
+  getAll(page: number = 1, limit: number = 10): Promise<CvEntity[]> {
+    const skip = (page - 1) * limit;
+    return this.cvRepository.find({
+      skip: skip,
+      take: limit,
+    });
+  }
+ 
+
 
   async findOneById({ id, user }: { id: number, user: any }): Promise<CvEntity> {
     const cv = await this.cvRepository.findOne({ where: { id } });
@@ -103,6 +113,20 @@ export class CvService {
     return await this.cvRepository.delete(id);  }
 
 
+    async getCvsByCriteria(searchDTO: SearchCvDto): Promise<CvEntity[]> {
+      if (searchDTO.age || searchDTO.criteria) {
+        return await this.cvRepository.find({
+          where: [
+            { firstname: Like(`%${searchDTO.criteria}%`) },
+            { name: Like(`%${searchDTO.criteria}%`) },
+            { job: Like(`%${searchDTO.criteria}%`) },
+            { age: searchDTO.age },
+          ]
+        });
+      } else {
+        return await this.cvRepository.find();
+      }
+    }
 
     isOwnerOrAdmin(cv:CvEntity, user: UserEntity): boolean {
 

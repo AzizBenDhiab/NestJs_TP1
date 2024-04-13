@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, NestModule,MiddlewareConsumer } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
@@ -6,8 +6,7 @@ import { CvModule } from './cv/cv.module';
 import { SkillModule } from './skill/skill.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as dotenv from 'dotenv'
-
-
+import { AuthMiddleware } from './auth.middleware';
 dotenv.config();
 
 @Module({
@@ -24,6 +23,10 @@ dotenv.config();
     }),
              ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, AuthMiddleware],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(AuthMiddleware).forRoutes('v2/cv');
+  }
+}
