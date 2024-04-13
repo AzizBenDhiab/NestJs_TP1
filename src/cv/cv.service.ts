@@ -35,6 +35,16 @@ export class CvService {
   async findAll() : Promise<CvEntity[]>{
     return await this.cvRepository.find();
   }
+  
+  getAll(page: number = 1, limit: number = 10): Promise<CvEntity[]> {
+    const skip = (page - 1) * limit;
+    return this.cvRepository.find({
+      skip: skip,
+      take: limit,
+    });
+  }
+ 
+
 
   async  findOne(id: number) : Promise<CvEntity> {
     const cv = await this.cvRepository.findOne({ where: { id } });
