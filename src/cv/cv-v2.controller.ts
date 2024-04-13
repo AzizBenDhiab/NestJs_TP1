@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UploadedFile, UseInterceptors,Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { CvService } from './cv.service';
 import { CreateCvDto } from './dto/create-cv.dto';
 import { UpdateCvDto } from './dto/update-cv.dto';
@@ -8,7 +8,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { MulterFile } from './interfaces/multer-file.interface';
 
 
-@Controller('cv')
+@Controller('v2/cv')
 export class CvController {
   constructor(private readonly cvService: CvService) {}
 
@@ -22,11 +22,6 @@ export class CvController {
   @Get()
   findAll() {
     return this.cvService.findAll();
-  }
-  
-  @Get('all')
-  getAll(@Query('page') page: number = 1, @Query('limit') limit: number = 10) {
-      return this.cvService.getAll(page, limit);
   }
 
   @Get(':id')
