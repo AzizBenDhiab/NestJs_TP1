@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateCvDto } from './dto/create-cv.dto';
 import { UpdateCvDto } from './dto/update-cv.dto';
 import { CvEntity } from './entities/cv.entity';
@@ -26,7 +26,7 @@ export class CvService {
   async associateFileWithCv(cvId: number, file: MulterFile): Promise<CvEntity> {
   const cv = await this.cvRepository.findOne({ where: { id: cvId } });
   if (!cv) {
-    throw new Error('cv not found');
+    throw new HttpException('cv not found', HttpStatus.BAD_REQUEST);
     }
    cv.path = file.path; 
    return this.cvRepository.save(cv);

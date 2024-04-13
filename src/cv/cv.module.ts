@@ -1,4 +1,4 @@
-import { Module, forwardRef } from '@nestjs/common';
+import { Module, forwardRef, HttpException, HttpStatus } from '@nestjs/common';
 import { CvService } from './cv.service';
 import { CvController } from './cv.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -21,7 +21,7 @@ import { diskStorage } from 'multer';
       },
       fileFilter: (req, file, cb) => {
         if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
-          return cb(new Error('Only image files are allowed!'), false);
+          return cb( new HttpException('Only image files are allowed!', HttpStatus.BAD_REQUEST) , false);
         }
         cb(null, true);
       },
