@@ -1,6 +1,9 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, JoinTable } from 'typeorm';
 import { CvEntity } from '../../cv/entities/cv.entity';
 import { SkillEntity } from '../../skill/entities/skill.entity';
+import { UserRoleEnum } from 'src/enums/user-role.enum';
+import { Exclude } from 'class-transformer';
+
 
 @Entity('user')
 export class UserEntity {
@@ -14,7 +17,19 @@ export class UserEntity {
     email: string;
 
     @Column()
+    @Exclude()
     password: string;
+
+    @Column()
+    @Exclude()
+    salt: string;
+
+    @Column({
+        type: 'enum',
+        enum: UserRoleEnum,
+        default: UserRoleEnum.USER
+      })
+      role: string;
 
     @OneToMany(
         type => CvEntity,
