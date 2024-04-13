@@ -7,6 +7,7 @@ import { SkillModule } from './skill/skill.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as dotenv from 'dotenv'
 
+
 dotenv.config();
 
 @Module({

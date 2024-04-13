@@ -1,3 +1,5 @@
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+
 import { Injectable, NotFoundException,UnauthorizedException } from '@nestjs/common';
 import { CreateCvDto } from './dto/create-cv.dto';
 import { UpdateCvDto } from './dto/update-cv.dto';
@@ -6,6 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserEntity } from '../user/entities/user.entity';
 import { UserService } from '../user/user.service';
+import { MulterFile } from './interfaces/multer-file.interface';
 import { SearchCvDto } from './dto/search-cv.dto';
 
 @Injectable()
@@ -17,11 +20,19 @@ export class CvService {
   ){
   }
 
- async create(createCvDto: CreateCvDto , user: UserEntity) : Promise<CvEntity> {
+  async create(createCvDto: CreateCvDto , user: UserEntity) : Promise<CvEntity> {
     const newCv = this.cvRepository.create({ ...createCvDto, user: user });
     return this.cvRepository.save(newCv);
   }
   
+  async associateFileWithCv(cvId: number, file: MulterFile): Promise<CvEntity> {
+  const cv = await this.cvRepository.findOne({ where: { id: cvId } });
+  if (!cv) {
+    throw new HttpException('cv not found', HttpStatus.BAD_REQUEST);
+    }
+   cv.path = file.path; 
+   return this.cvRepository.save(cv);
+  }
 
   async findAll() : Promise<CvEntity[]>{
     return await this.cvRepository.find();

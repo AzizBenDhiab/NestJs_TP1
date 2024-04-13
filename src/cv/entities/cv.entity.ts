@@ -24,6 +24,7 @@ export class CvEntity {
     @Column()
     path: string;
 
+
     @ManyToOne(
         type => UserEntity,
         (user) => user.cvs,
