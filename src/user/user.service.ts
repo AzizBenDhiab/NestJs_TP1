@@ -64,6 +64,7 @@ export class UserService {
       throw new NotFoundException('username ou password erronée');
     }
     const payload = { username: user.username, sub: user.id, role: user.role };
+
     const token = this.jwtService.sign(payload, { secret:process.env.SECRET });
 
     return {

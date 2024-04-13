@@ -57,7 +57,7 @@ export class CvService {
     if (!cv) {
       throw new NotFoundException(`Le CV d'ID ${id} n'existe pas`);
     }
-    if (cv.user.id === user.id || user.role === 'admin') {
+    if ( this.isOwnerOrAdmin(cv, user)) {
       return cv;
     } else {
       throw new UnauthorizedException("Vous n'êtes pas autorisé à accéder à ce CV");
@@ -69,7 +69,7 @@ export class CvService {
   if (!existingCv) {
     throw new NotFoundException(`Le CV d'id ${id} n'existe pas`);
   }
-  if(existingCv.user.id !== user.id && user.role !== 'admin') {
+  if(this.isOwnerOrAdmin(existingCv, user) === false) {
     throw new UnauthorizedException("Vous n'êtes pas autorisé à modifier ce CV");
   }
   if (cvDto.name ) {
@@ -97,28 +97,15 @@ export class CvService {
     if (!existingCv) {
       throw new NotFoundException(`Le CV d'id ${id} n'existe pas`);
     }
-    if(existingCv.user.id !== user.id && user.role !== 'admin') {
+    if(this.isOwnerOrAdmin(existingCv, user) === false) {
       throw new UnauthorizedException("Vous n'êtes pas autorisé à supprimer ce CV");
     }
     return await this.cvRepository.delete(id);  }
 
 
 
-async searchCvs(searchDto: SearchCvDto): Promise<CvEntity[]> {
-  const { age, criteria } = searchDto;
+    isOwnerOrAdmin(cv:CvEntity, user: UserEntity): boolean {
 
-  // Build query conditions based on provided search criteria
-  const queryBuilder = this.cvRepository.createQueryBuilder('cv');
-  if (age) {
-      queryBuilder.orWhere('cv.age = :age', { age });
-  }
-  if (criteria) {
-      queryBuilder.orWhere('cv.name LIKE :criteria', { criteria: `%${criteria}%` })
-          .orWhere('cv.firstname LIKE :criteria', { criteria: `%${criteria}%` })
-          .orWhere('cv.job LIKE :criteria', { criteria: `%${criteria}%` });
-  }
-
-  // Execute the query and return the result
-  return queryBuilder.getMany();
-}
+    return cv.user.id === user.id || user.role === 'admin';
+   }
 }
