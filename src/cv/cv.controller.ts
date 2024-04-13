@@ -31,6 +31,7 @@ export class CvController {
   create(@Body() body:  CreateCvDto, @User() user: UserEntity) {
     return this.cvService.create(body, user);
   }
+  
   @Get()
   @UseGuards(JwtAuthGuard)
   findRelatedCvs(@User() user: UserEntity) {
@@ -46,24 +47,24 @@ export class CvController {
 
   @UseGuards(JwtAuthGuard)
   @Get(':id')
-  findOne(   @Param('id', ParseIntPipe) id, @User() user) {
+  findOne(   @Param('id', ParseIntPipe) id: number, @User() user: UserEntity) {
     return this.cvService.findOneById({ id: +id, user: user });
   }
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
-  update(@Param('id') id: string,@User() user,@Body() body:UpdateCvDto){
+  update(@Param('id',ParseIntPipe) id: number, @User() user: UserEntity,@Body() body:UpdateCvDto){
 
      return this.cvService.update(+id,  body,user);
   }
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  remove(@Param('id') id: number,@User() user) {
+  remove(@Param('id', ParseIntPipe) id: number,@User() user: UserEntity) {
     return this.cvService.remove(+id,user);
   }
   @UseGuards(JwtAuthGuard)
   @Post('upload/:id')
   @UseInterceptors(FileInterceptor('file'))
-  async uploadFile(@UploadedFile() file: MulterFile, @Param('id') id: number): Promise<CvEntity> {
+  async uploadFile(@UploadedFile() file: MulterFile, @Param('id',ParseIntPipe) id: number): Promise<CvEntity> {
     return this.cvService.associateFileWithCv(id, file);
   }
 }
