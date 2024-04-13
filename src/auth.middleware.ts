@@ -14,6 +14,7 @@ export class AuthMiddleware implements NestMiddleware {
             return res.status(401).json({ message: 'Unauthorized' });
         }
 
+
         try {
             const decodedToken = decodeToken(token);
             if (!decodedToken.userId) {

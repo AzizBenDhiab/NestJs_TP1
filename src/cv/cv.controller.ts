@@ -6,6 +6,7 @@ import { UserEntity } from '.././user/entities/user.entity';
 import { CvEntity } from './entities/cv.entity'; 
 import { FileInterceptor } from '@nestjs/platform-express';
 import { MulterFile } from './interfaces/multer-file.interface';
+import { SearchCvDto } from './dto/search-cv.dto';
 
 
 @Controller('cv')
@@ -19,11 +20,20 @@ export class CvController {
     return this.cvService.create(createCvDto, user);
   }
 
+
+
+  @Get('find')
+  async findByCriteria(
+    @Query() searchDTO: SearchCvDto,
+  ) {
+    
+    return this.cvService.getCvsByCriteria(searchDTO);
+  }
+  
   @Get()
   findAll() {
     return this.cvService.findAll();
   }
-  
   @Get('all')
   getAll(@Query('page') page: number = 1, @Query('limit') limit: number = 10) {
       return this.cvService.getAll(page, limit);

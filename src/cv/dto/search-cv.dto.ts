@@ -1,16 +1,16 @@
 // search-cv.dto.ts
 
 import { Type } from "class-transformer";
-import { IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 
 export class SearchCvDto {
 
-    @IsNotEmpty()
+    @IsOptional()
     @Type(() => Number )
     @IsNumber()
     age: number;
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsString()
     criteria: string;
 }
