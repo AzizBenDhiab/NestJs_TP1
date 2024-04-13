@@ -10,7 +10,13 @@ export class CvEntity {
     name: string;
 
     @Column()
+    firstname : string ;
+
+    @Column()
     age: number;
+
+    @Column()
+    cin : number;
 
     @Column()
     job: string;
