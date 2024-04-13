@@ -64,7 +64,7 @@ export class CvService {
     }
   }
 
-  async update(id: number, cvDto, user: UserEntity ): Promise<CvEntity> {
+  async update(id: number, cvDto: UpdateCvDto, user: UserEntity ): Promise<CvEntity> {
     const existingCv = await this.cvRepository.findOne({ where: { id } });
   if (!existingCv) {
     throw new NotFoundException(`Le CV d'id ${id} n'existe pas`);
