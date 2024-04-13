@@ -6,15 +6,31 @@ import { UserEntity } from './entities/user.entity';
 import { SkillEntity } from './../skill/entities/skill.entity';
 import { SkillModule } from '../skill/skill.module';
 import { CvModule } from '../cv/cv.module';
+import { PassportModule } from '@nestjs/passport';
+import { JwtModule } from '@nestjs/jwt';
+import { JwtStrategy } from './strategy/passport-jwt.strategy';
+import { ConfigModule } from '@nestjs/config';
+
+
 
 @Module({
  imports: [
+   ConfigModule,
     TypeOrmModule.forFeature([UserEntity]),
     forwardRef(() =>  CvModule),
-    forwardRef(() =>SkillModule)
+    forwardRef(() =>SkillModule),
+    PassportModule.register({
+      defaultStrategy: 'jwt'
+    }),
+    JwtModule.register({
+        secret: process.env.SECRET,
+        signOptions: {
+          expiresIn: 3600
+        }
+      })
   ],
   controllers: [UserController],
-  providers: [UserService],
+  providers: [UserService, JwtStrategy],
   exports: [UserService, TypeOrmModule]
 })
 export class UserModule {}
