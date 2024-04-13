@@ -1,6 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-
-import { Injectable, NotFoundException,UnauthorizedException } from '@nestjs/common';
+import { HttpException, HttpStatus,  Injectable, NotFoundException,UnauthorizedException } from '@nestjs/common';
 import { CreateCvDto } from './dto/create-cv.dto';
 import { UpdateCvDto } from './dto/update-cv.dto';
 import { CvEntity } from './entities/cv.entity';
