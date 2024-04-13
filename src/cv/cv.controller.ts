@@ -31,6 +31,11 @@ export class CvController {
   create(@Body() body:  CreateCvDto, @User() user: UserEntity) {
     return this.cvService.create(body, user);
   }
+  @Get()
+  @UseGuards(JwtAuthGuard)
+  findRelatedCvs(@User() user: UserEntity) {
+    return this.cvService.findRelatedCvs(user);
+  }
 
   @Get('all')
   @UseGuards(JwtAuthGuard, AdminGuard)

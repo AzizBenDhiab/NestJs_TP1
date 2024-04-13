@@ -30,6 +30,12 @@ export class CvService {
 
 
   }
+  async findRelatedCvs(user: UserEntity): Promise<CvEntity[]> {
+    if(user.role === 'admin'){
+      return await this.cvRepository.find();
+    }
+    return await this.cvRepository.find({ where: { user } });
+  }
   
   async associateFileWithCv(cvId: number, file: MulterFile): Promise<CvEntity> {
   const cv = await this.cvRepository.findOne({ where: { id: cvId } });
