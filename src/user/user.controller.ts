@@ -31,4 +31,11 @@ export class UserController {
   remove(@Param('id') id: string) {
     return this.userService.remove(+id);
   }
+
+  @Post()
+  register(
+    @Body() userData: CreateUserDto
+  ) {
+    return this.userService.register(userData);
+  }
 }
