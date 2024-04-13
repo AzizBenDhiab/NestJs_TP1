@@ -9,6 +9,7 @@ import {
   UploadedFile,
   UseInterceptors,
   UseGuards, UnauthorizedException, Request, ParseIntPipe,
+  Query,
 } from '@nestjs/common';
 
 import { CvService } from './cv.service';
